@@ -12,10 +12,11 @@ Details on how to add energy equation to icoFoam is explained in the link below.
 
 https://openfoamwiki.net/index.php/How_to_add_temperature_to_icoFoam 
 
+The snippet below is copied from scalarTransport.C file inside $FOAM_SRC directory to further clarify the equation that is solved.
+
 ```C++
 // $FOAM_SRC/functionObjects/solvers/scalarTransport/
-    // from scalarTransport.C
-    /*
+// from scalarTransport.C
      for (label i = 0; i <= nCorr_; i++)
         {
             fvScalarMatrix sEqn
