@@ -37,3 +37,5 @@ The snippet below is copied from scalarTransport.C file inside $FOAM_SRC directo
 ```
 
 The solver energyIcoFoam which can be found inside solver directory is compiled using wmake command. It's an updated and slightly modified version of the solver provided with the link. The results can also be verified. 
+
+Tested version: __OpenFOAM ESI v2412__
