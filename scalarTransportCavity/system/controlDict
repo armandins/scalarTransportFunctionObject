@@ -1,0 +1,112 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2406                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     energyIcoFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         5.0;
+
+deltaT          0.001;
+
+writeControl    timeStep;
+
+writeInterval   20;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+functions
+{
+    // Defined scalarTransport in order to calculate temperature in cavity case
+    // Steps in order to make it work are : 
+    // 1 - Make a file in 0 folder with the same name as field Theta and adjust b.c.
+    // 2 - In file system/fvSolution add a function for the field Theta. It can be the same 
+    // as the one set up for T 
+    // 3 - In file system/fvSchemes, add a scheme to solve div(phi,Theta). 
+    // Refer to the original equation being solved by scalarTransport to understand why this 
+    // addition is needed. 
+    // $FOAM_SRC/functionObjects/solvers/scalarTransport/
+    // from scalarTransport.C
+    /*
+     for (label i = 0; i <= nCorr_; i++)
+        {
+            fvScalarMatrix sEqn
+            (
+                fvm::ddt(s)
+              + fvm::div(limitedPhiAlpha, s, divScheme)
+              - fvm::laplacian(D, s, laplacianScheme)
+              ==
+                alpha*fvOptions_(s)
+            );
+ 
+            sEqn.relax(relaxCoeff);
+            fvOptions_.constrain(sEqn);
+            sEqn.solve(mesh_.solverDict(schemesField_));
+ 
+            tTPhiUD = sEqn.flux();
+        }
+    */
+
+
+    scalarTransportTheta
+    {
+        type            scalarTransport;
+        libs            (solverFunctionObjects);
+
+        // Check later
+        // The goal is to make scalarTransport1 read the value of 
+        // D from transportProperties dictionary.
+        // dimensionedScalar alph = transportProperties.lookup("D");
+
+        field           Theta;
+        //D             alph;
+        D               1e-3;
+        //D             lookup("D");
+        //D             transportProperties.lookup("D");
+        //s             none;
+        // The lines below indentify the velocity for the U
+        // Makes it couple with the momentum equation inside the solver.
+        U               U;
+        phi             phi;
+
+        // Source term set to zero. 
+        source          uniform 0; 
+        turbulence      off;
+
+        // Adjust writeControl to be the same as controlDict setup
+        writeControl    timeStep;
+        writeInterval   20;
+    }
+}
+
+
+// ************************************************************************* //
