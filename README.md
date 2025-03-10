@@ -35,3 +35,5 @@ The snippet below is copied from scalarTransport.C file inside $FOAM_SRC directo
             tTPhiUD = sEqn.flux();
         }
 ```
+
+The solver energyIcoFoam which can be found inside solver directory is compiled using wmake command. It's an updated and slightly modified version of the solver provided with the link. The results can also be verified. 
