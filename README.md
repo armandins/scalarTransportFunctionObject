@@ -10,4 +10,27 @@ This case solves energy equation using both solver modification method and funct
 For comparison purposes, temperature is denoted with T when solved via modified icoFoam and denoted with Theta when solved using functionObject. 
 Details on how to add energy equation to icoFoam is explained in the link below. 
 
-https://openfoamwiki.net/index.php/How_to_add_temperature_to_icoFoam
+https://openfoamwiki.net/index.php/How_to_add_temperature_to_icoFoam 
+
+```C++
+// $FOAM_SRC/functionObjects/solvers/scalarTransport/
+    // from scalarTransport.C
+    /*
+     for (label i = 0; i <= nCorr_; i++)
+        {
+            fvScalarMatrix sEqn
+            (
+                fvm::ddt(s)
+              + fvm::div(limitedPhiAlpha, s, divScheme)
+              - fvm::laplacian(D, s, laplacianScheme)
+              ==
+                alpha*fvOptions_(s)
+            );
+ 
+            sEqn.relax(relaxCoeff);
+            fvOptions_.constrain(sEqn);
+            sEqn.solve(mesh_.solverDict(schemesField_));
+ 
+            tTPhiUD = sEqn.flux();
+        }
+```
